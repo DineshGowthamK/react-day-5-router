@@ -1,6 +1,9 @@
 import React from "react";
 import Card from "./Card";
-function Dashboard() {
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from "react-router-dom";
+function Dashboard({ user, setUser }) {
   let data = [
     {
       title: "EARNINGS (MONTHLY)",
@@ -31,6 +34,19 @@ function Dashboard() {
       isProgress: false,
     },
   ];
+  let handleDelete = (id)=>{
+    let index=0;
+    for(let i=0;i<user.length;i++){
+      if(user[i].id==id){
+        index=i;
+        break;
+      }
+    }
+    let newArray = [...user]
+    newArray.splice(index,1)
+    setUser(newArray)
+  }
+  let navigate = useNavigate();
   return (
     <div id="content-wrapper" className="d-flex flex-column">
       <div id="content">
@@ -42,6 +58,36 @@ function Dashboard() {
             {data.map((e, i) => {
               return <Card cardData={e} key={i} />;
             })}
+            <Table striped bordered hover size="sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>E-mail</th>
+                  <th>Mobile</th>
+                  <th>Batch</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.map((e, i) => {
+                  return (
+                    <tr key={e.id}>
+                      <td>{i+1}</td>
+                      <td>{e.name}</td>
+                      <td>{e.email}</td>
+                      <td>{e.mobile}</td>
+                      <td>{e.batch}</td>
+                      <td>
+                        <Button variant="primary" onClick={()=>{navigate(`/edit-user/${e.id}`)}}>Edit</Button>
+                        &nbsp;
+                        <Button variant="danger" onClick={()=>handleDelete(e.id)}>Delete</Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
           </div>
         </div>
       </div>
