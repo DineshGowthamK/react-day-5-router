@@ -7,6 +7,9 @@ import Class from './components/Class'
 import AddUser from './components/AddUser'
 import EditUser from './components/EditUser'
 import { BrowserRouter,Routes,Route, Navigate} from 'react-router-dom'
+export const UserContext = React.createContext();
+import UserContextComponent from './utils/UserContextComponent'
+import DashboardContextComponent from './utils/DashboardContextComponent'
 function App() {
   let [user,setUser] = useState([
     {
@@ -41,15 +44,22 @@ function App() {
   return <div id="wrapper">
     <BrowserRouter>
     <Sidebar />
+    <UserContext.Provider value = {{user,setUser}}>
     <Routes>
-      <Route path='/dashboard' element={<Dashboard user={user} setUser={setUser}/>}/>
-      <Route path='/user' element={<User />}/>
-      <Route path='/query' element={<Query />}/>
-      <Route path='/class' element={<Class/>}/>
-      <Route path='/add-user' element={<AddUser user={user} setUser={setUser}/>}/>
-      <Route path='/edit-user/:id' element={<EditUser user={user} setUser={setUser}/>}/>
+      <Route path='/dashboard' element={<DashboardContextComponent>
+        <UserContextComponent>
+          <Dashboard/>
+        </UserContextComponent>
+        </DashboardContextComponent>}/>
+      <Route path='/class' element={<Class/>}>
+        <Route path='user' element={<User />}/>
+        <Route path='query' element={<Query />}/>
+      </Route>
+      <Route path='/add-user' element={<UserContextComponent><AddUser/></UserContextComponent>}/>
+      <Route path='/edit-user/:id' element={<UserContextComponent><EditUser/></UserContextComponent>}/>
       <Route path='*' element={<Navigate to='/dashboard'/>}/>
     </Routes>
+    </UserContext.Provider>
     </BrowserRouter>
     
     
